@@ -6,12 +6,13 @@ and extracts financial/statistical data.
 """
 
 import logging
+from datetime import datetime
 from typing import List, Optional
 
 from bs4 import BeautifulSoup, Tag
 
-from ingestor_scrapper.core.entities import Item
-from ingestor_scrapper.core.ports import Parser
+from ingestor_scrapper.core.entities import Document, Record
+from ingestor_scrapper.core.ports import HtmlParser
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ CELL_INDEX_FECHA = 1
 CELL_INDEX_VALOR = 2
 
 
-class AdapterBcraParser(Parser):
+class AdapterBcraParser(HtmlParser):
     """
     Parser adapter specifically for BCRA (www.bcra.gob.ar) structure.
 
@@ -42,60 +43,59 @@ class AdapterBcraParser(Parser):
         """
         self.parser = parser
 
-    def parse(self, html: str, url: str) -> List[Item]:
+    def parse(self, document: Document) -> List[Record]:
         """
-        Parse HTML from BCRA pages and extract structured data.
+        Parse HTML document from BCRA pages and extract structured records.
 
         Args:
-            html: Raw HTML content
-            url: Source URL of the HTML
+            document: Document containing HTML content
 
         Returns:
-            List[Item]: List of extracted items
+            List[Record]: List of extracted records
 
         Raises:
             Exception: If parsing fails
         """
         try:
             # Validate input
-            if not html or not html.strip():
-                logger.warning("Empty HTML content for URL: %s", url)
+            if not document.text or not document.text.strip():
+                logger.warning("Empty HTML content for URL: %s", document.url)
                 return []
 
             # Parse HTML with BeautifulSoup
-            soup = BeautifulSoup(html, self.parser)
+            soup = BeautifulSoup(document.text, self.parser)
 
             # Find all table rows and extract data
             rows = soup.find_all("tr")
-            items = []
+            records = []
 
             for row in rows:
-                item = self._extract_item_from_row(row, url)
-                if item:
-                    items.append(item)
+                record = self._extract_record_from_row(row, document.url)
+                if record:
+                    records.append(record)
 
             logger.info(
-                "Extracted %d items from BCRA page: %s", len(items), url
+                "Extracted %d records from BCRA page: %s",
+                len(records),
+                document.url,
             )
 
-            return items
+            return records
 
         except Exception as e:
-            logger.error("Error parsing BCRA page %s: %s", url, e)
-            # Return empty list instead of error item
-            # for cleaner error handling
+            logger.error("Error parsing BCRA page %s: %s", document.url, e)
             return []
 
-    def _extract_item_from_row(self, row: Tag, url: str) -> Optional[Item]:
+    def _extract_record_from_row(self, row: Tag, url: str) -> Optional[Record]:
         """
-        Extract an Item from a table row (tr element).
+        Extract a Record from a table row (tr element).
 
         Args:
             row: BeautifulSoup Tag representing a table row
             url: Source URL of the page
 
         Returns:
-            Item if extraction successful, None otherwise
+            Record if extraction successful, None otherwise
 
         This method follows Single Responsibility Principle:
         - One method, one purpose: extract data from one row
@@ -124,11 +124,17 @@ class AdapterBcraParser(Parser):
             valor,
         )
 
-        # Create and return item
-        return Item(
-            title=detalle,
-            content=f"Fecha: {fecha} | Valor: {valor}",
-            url=url,
+        # Create and return record with data dict
+        data = {
+            "detalle": detalle,
+            "fecha": fecha,
+            "valor": valor,
+        }
+
+        return Record(
+            data=data,
+            source_url=url,
+            fetched_at=datetime.now(),
         )
 
     def _is_valid_row(self, cells: List[Tag]) -> bool:

@@ -20,7 +20,12 @@ import logging
 import scrapy
 from scrapy.http import Response
 
-from ingestor_scrapper.adapters.fetcher_scrapy import AdapterScrapyFetcher
+from ingestor_scrapper.adapters.fetcher_scrapy import (
+    AdapterScrapyDocumentFetcher,
+)
+from ingestor_scrapper.adapters.normalizer_bcra import (
+    AdapterBcraNormalizer,
+)
 from ingestor_scrapper.adapters.output_json import AdapterJsonOutput
 from ingestor_scrapper.adapters.parser_bcra import AdapterBcraParser
 from ingestor_scrapper.application.bcra_use_case import BcraUseCase
@@ -97,12 +102,18 @@ class BcraSpider(scrapy.Spider):
 
         # Step 1: Create adapters (wire dependencies)
         # Following Dependency Injection pattern
-        fetcher = AdapterScrapyFetcher(response)
+        fetcher = AdapterScrapyDocumentFetcher(response)
         parser = AdapterBcraParser()
+        normalizer = AdapterBcraNormalizer()
         output = AdapterJsonOutput(output_file=JSON_OUTPUT_FILE)
 
         # Step 2: Create use case and inject dependencies
-        use_case = BcraUseCase(fetcher=fetcher, parser=parser, output=output)
+        use_case = BcraUseCase(
+            fetcher=fetcher,
+            parser=parser,
+            normalizer=normalizer,
+            output=output,
+        )
 
         # Step 3: Execute the use case
         try:

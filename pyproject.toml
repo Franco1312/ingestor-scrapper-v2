@@ -28,7 +28,11 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
-ignore = ["E501"]  # Ignore line too long (we'll use ruff format for that)
+ignore = [
+    "E501",  # Ignore line too long (we'll use ruff format for that)
+    "FIX002",  # Ignore TODO comments warnings
+    "FIX003",  # Ignore TODO comments warnings
+]
 
 [tool.ruff.format]
 quote-style = "double"
