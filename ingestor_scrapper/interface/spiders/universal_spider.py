@@ -13,14 +13,14 @@ import logging
 import scrapy
 from scrapy.http import Response
 
-from ingestor_scrapper.adapters.fetcher_scrapy import (
+from ingestor_scrapper.adapters.fetchers import (
     AdapterScrapyDocumentFetcher,
 )
-from ingestor_scrapper.adapters.normalizer_generic import (
+from ingestor_scrapper.adapters.normalizers import (
     AdapterGenericNormalizer,
 )
-from ingestor_scrapper.adapters.output_stdout import AdapterStdoutOutput
-from ingestor_scrapper.adapters.registry import PARSER_REGISTRY
+from ingestor_scrapper.adapters.outputs import AdapterStdoutOutput
+from ingestor_scrapper.adapters.parsers import PARSER_REGISTRY
 from ingestor_scrapper.application.parser_router import ParserRouter
 from ingestor_scrapper.application.universal_ingest_use_case import (
     UniversalIngestUseCase,

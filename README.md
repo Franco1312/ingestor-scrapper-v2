@@ -107,10 +107,10 @@ Para crear un nuevo spider, consulta la documentación: [Arquitectura Escalable]
 Ejemplo básico:
 
 ```python
-from ingestor_scrapper.adapters.fetcher_scrapy import AdapterScrapyDocumentFetcher
-from ingestor_scrapper.adapters.parser_bcra import AdapterBcraParser
-from ingestor_scrapper.adapters.normalizer_bcra import AdapterBcraNormalizer
-from ingestor_scrapper.adapters.output_json import AdapterJsonOutput
+from ingestor_scrapper.adapters.fetchers import AdapterScrapyDocumentFetcher
+from ingestor_scrapper.adapters.parsers import AdapterBcraParser
+from ingestor_scrapper.adapters.normalizers import AdapterBcraNormalizer
+from ingestor_scrapper.adapters.outputs import AdapterJsonOutput
 from ingestor_scrapper.application.bcra_use_case import BcraUseCase
 
 class MiSpider(scrapy.Spider):

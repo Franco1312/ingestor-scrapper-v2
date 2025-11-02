@@ -234,8 +234,10 @@ class AdapterMiFormatoParser(MiFormatoParser):
 ### Paso 3: Agregar al Registry
 
 ```python
-# adapters/registry.py
-from ingestor_scrapper.adapters.parser_mi_formato import AdapterMiFormatoParser
+# adapters/parsers/registry.py
+from ingestor_scrapper.adapters.parsers.mi_formato import (
+    AdapterMiFormatoParser,
+)
 from ingestor_scrapper.core.entities import ContentType
 
 _MI_FORMATO_PARSER = AdapterMiFormatoParser()

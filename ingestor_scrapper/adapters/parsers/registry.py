@@ -6,10 +6,10 @@ Parser implementations. This allows the ParserRouter to select the
 appropriate parser for each content type.
 """
 
-from ingestor_scrapper.adapters.parser_bs4 import AdapterBs4Parser
-from ingestor_scrapper.adapters.parser_csv import AdapterCsvParser
-from ingestor_scrapper.adapters.parser_excel import AdapterExcelParser
-from ingestor_scrapper.adapters.parser_pdf import AdapterPdfParser
+from ingestor_scrapper.adapters.parsers.bs4 import AdapterBs4Parser
+from ingestor_scrapper.adapters.parsers.csv import AdapterCsvParser
+from ingestor_scrapper.adapters.parsers.excel import AdapterExcelParser
+from ingestor_scrapper.adapters.parsers.pdf import AdapterPdfParser
 from ingestor_scrapper.core.entities import ContentType
 
 # Initialize parsers
